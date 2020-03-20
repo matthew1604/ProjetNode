@@ -28,7 +28,7 @@ const axiosRestdb = axios.create(restdbConf)
 const bodyParser = require('body-parser')
 const urlEncodedParser = bodyParser.urlencoded({ extended: false })
 
-app.use(cors)
+app.use(cors())
 
 app.get('/', (req, res) => {
     const token = jwt.sign({ foo: 'bar' }, 'secret')
@@ -71,7 +71,7 @@ app.get('/signin', (req, res) => {
 })
 
 app.get('/private', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.send(req.user.profile)
+    res.json(req.user.profile)
 })
 
 app.post('/login', urlEncodedParser, (req, res) => {
