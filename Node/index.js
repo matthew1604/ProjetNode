@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const axios = require('axios')
+const cors = require('cors')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const   JwtStrategy = require('passport-jwt').Strategy,
@@ -26,6 +27,8 @@ const axiosRestdb = axios.create(restdbConf)
 
 const bodyParser = require('body-parser')
 const urlEncodedParser = bodyParser.urlencoded({ extended: false })
+
+app.use(cors)
 
 app.get('/', (req, res) => {
     const token = jwt.sign({ foo: 'bar' }, 'secret')
