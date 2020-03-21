@@ -7,12 +7,23 @@ const passport = require('passport')
 const   JwtStrategy = require('passport-jwt').Strategy,
         ExtractJwt = require('passport-jwt').ExtractJwt
 
+const secret = 'secret'
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'secret'
+    secretOrKey: secret
 }
 passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    done(null, true)
+    const email = jwt_payload.user
+
+    const query = { email }
+    const url = '/users-blog?q=' + JSON.stringify(query)
+    let user = false
+    axiosRestdb.get(url).then( response => {
+        if (response.data.length > 0)
+            user = response.data[0]
+    })
+
+    done(null, user)
 }))
 
 const restdbConf = {
@@ -26,17 +37,15 @@ const restdbConf = {
 const axiosRestdb = axios.create(restdbConf)
 
 const bodyParser = require('body-parser')
-const urlEncodedParser = bodyParser.urlencoded({ extended: false })
+const urlEncodedParser = bodyParser.urlencoded({ extended: true })
 
 app.use(cors())
 
 app.get('/', (req, res) => {
-    const token = jwt.sign({ foo: 'bar' }, 'secret')
-    res.json({token})
-    // res.json({msg: 'Hello World!'})
+    res.json({msg: 'Hello World!'})
 })
 
-app.get('/article/:id', (req, res) => {
+app.post('/article/:id', (req, res) => {
     if (isNaN(req.params.id)) return res.json({error: 'NaN'})
     const id = parseInt(req.params.id)
 
@@ -44,51 +53,99 @@ app.get('/article/:id', (req, res) => {
     const url = '/article?q=' + JSON.stringify(query)
     axiosRestdb.get(url).then( response => {
         if (response.data[0] === undefined) res.json({})
-        else res.json(response.data[0])
+        else {
+            res.json(response.data[0])
+        }
     }).catch( error => res.json({error}) )
 })
 
-app.get('/articles', (req, res) => {
-    axiosRestdb.get('/article')
+app.post('/articles', (req, res) => {
+    const url = '/article'
+    axiosRestdb.get(url)
         .then( response => res.json(response.data) )
         .catch( error => res.json({error}) )
 })
 
-app.get('/add-article', (req, res) => {
-    res.json({})
+app.post('/add-article', urlEncodedParser, (req, res) => {
+    const title = req.body.title
+    const body = req.body.body
+    const author_id = req.body.author_id
+
+    const data = {
+        title,
+        body,
+        author_id
+    }
+    const url = '/article'
+    axiosRestdb.post(url, data)
+        .then( response => res.json(response.data) )
+        .catch( error => res.json({error}) )
 })
 
-app.get('/remove-article', (req, res) => {
-    res.json({})
+app.post('/remove-article', urlEncodedParser, (req, res) => {
+    const id = req.body.id
+    const url = '/article/' + id 
+    axiosRestdb.delete(url)
+        .then( response => res.json(response.data) )
+        .catch( error => res.json({error}) )
 })
 
-app.get('/update-article', (req, res) => {
-    res.json({})
+app.post('/update-article', urlEncodedParser, (req, res) => {
+    const id = req.body.title
+    const title = req.body.title
+    const body = req.body.body
+    const author_id = req.body.author_id
+
+    const data = {
+        title,
+        body,
+        author_id
+    }
+    const url = '/article/' + id
+    axiosRestdb.put(url, data)
+        .then( response => res.json(response.data) )
+        .catch( error => res.json({error}) )
 })
 
-app.get('/signin', (req, res) => {
-    res.json({})
-})
+app.post('/signin', urlEncodedParser, (req, res) => {
+    const email = req.body.email
+    const password = req.body.password
+    const firstname = req.body.firstname
+    const lastname = req.body.lastname
 
-app.get('/private', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.json(req.user.profile)
+    const data = {
+        email,
+        password,
+        firstname,
+        lastname
+    }
+    const url = '/users-blog'
+    axiosRestdb.post(url, data)
+        .then( response => res.json(response.data) )
+        .catch( error => res.json({error}) )
 })
 
 app.post('/login', urlEncodedParser, (req, res) => {
-    res.json({})
     const email = req.body.email
-    const password = res.body.password
+    const password = req.body.password
 
     const query = {
         email,
         password
     }
-    const url = '/user-blog?q=' + JSON.stringify(query)
+    const url = '/users-blog?q=' + JSON.stringify(query)
     axiosRestdb.get(url).then( response => {
-        res.json(response)
+        if (response.data.length > 0) {
+            const user = response.data[0]
+            delete user.password
+            const userJwt = jwt.sign({ 
+                user: user.email,
+            }, secret)
+            res.json( {jwt: userJwt} )
+        } else res.json({ error: "wrong email or password" })
     }).catch( error => res.json({error}) )
 })
 
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
     console.log('Listening on port ' + process.env.PORT)
 })
