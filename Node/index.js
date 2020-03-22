@@ -59,6 +59,20 @@ app.post('/article/:id', (req, res) => {
     }).catch( error => res.json({error}) )
 })
 
+app.post('/user/:id', (req, res) => {
+    if (isNaN(req.params.id)) return res.json({error: 'NaN'})
+    const id = parseInt(req.params.id)
+
+    const query = { id }
+    const url = '/users-blog?q=' + JSON.stringify(query)
+    axiosRestdb.get(url).then( response => {
+        if (response.data[0] === undefined) res.json({})
+        else {
+            res.json(response.data[0])
+        }
+    }).catch( error => res.json({error}) )
+})
+
 app.post('/articles', (req, res) => {
     const url = '/article'
     axiosRestdb.get(url)
