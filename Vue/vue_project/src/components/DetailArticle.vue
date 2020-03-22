@@ -3,10 +3,9 @@
     <b-card no-body class="overflow-hidden" style="max-width: 540px;">
         <b-row no-gutters>
         <b-col md="6">
-            <b-card-body title="Titre de l'article" sub-title="Auteur">
+            <b-card-body :title="article.title" :sub-title="article.author_id">
             <b-card-text>
-                This is a wider card with supporting text as a natural lead-in to additional content.
-                This content is a little bit longer.
+                {{article.body}}
             </b-card-text>
             </b-card-body>
         </b-col>
@@ -16,9 +15,27 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "DetailArticle",
-  props: {}
+  data() {
+    return {
+      article: []
+    };
+  },
+  methods: {
+    load(){
+      axios
+      .post("https://projet-js-nasi-vergely.herokuapp.com/article/"+this.$store.state.id)
+      .then(response => {
+        this.article = response.data
+      })
+      .catch(error => console.log(error));
+    }
+  },
+  created() {
+      this.load()
+  }
 };
 </script>
 

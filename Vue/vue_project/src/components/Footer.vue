@@ -1,5 +1,6 @@
 <template>
   <div id="footer">
+    <p>Projet par NASI Bénédicte et VERGELY Matthew</p>
   </div>
 </template>
 
@@ -18,5 +19,11 @@ export default {
   background-color: whitesmoke;
   height: 10%;
   width: 100%;
+}
+
+p {
+  margin-top: 1%;
+  margin-left: 1%;
+  color: gray;
 }
 </style>

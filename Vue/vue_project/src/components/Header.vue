@@ -12,8 +12,8 @@
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
         <b-nav-form>
-          <b-button  size="sm" class="my-2 my-sm-0"><router-link to="/inscription">Inscription</router-link></b-button>
-          <b-button size="sm" class="my-2 my-sm-0" id="btninscription">Se connecter</b-button>
+          <b-button size="sm" class="my-2 my-sm-0"><router-link to="/login">Se connecter</router-link></b-button>
+          <b-nav-item  size="sm" class="my-2 my-sm-0"><router-link to="/inscription">S'inscrire</router-link></b-nav-item>
         </b-nav-form>
         </b-navbar-nav>
         </b-collapse>

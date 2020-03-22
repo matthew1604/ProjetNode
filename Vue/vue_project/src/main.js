@@ -10,10 +10,12 @@ import DeleteArticle from "./components/DeleteArticle";
 import ModifyArticle from "./components/ModifyArticle";
 import Inscription from "./components/Inscription";
 import DetailArticle from "./components/DetailArticle";
+import Login from "./components/Login";
 import { BootstrapVue} from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import Vuex from 'vuex'
+import axios from "axios";
 
 Vue.use(Vuex)
 Vue.use(VueRouter);
@@ -56,6 +58,11 @@ const routes = [
     name: "DetailArticle",
     component: DetailArticle,
     path: "/detail-article"
+  },
+  {
+    name: "Login",
+    component: Login,
+    path: "/login"
   }
 ];
 
@@ -65,11 +72,23 @@ const router = new VueRouter({
 
 const store = new Vuex.Store({
   state: {
-    url: ""
+    articles: [],
+    id: 0
   },
   mutations: {
-    change(state, imageUrl) {
-      state.url = imageUrl;
+    loadArticles(state) {
+      axios
+      .post("https://projet-js-nasi-vergely.herokuapp.com/articles")
+      .then(response => {
+        state.articles = [];
+        for (let i=0; i<response.data.length; i++){
+          state.articles.push(response.data[i])
+        }
+      })
+      .catch(error => console.log(error));
+    },
+    setId(state, id){
+      state.id = id;
     }
   }
 });

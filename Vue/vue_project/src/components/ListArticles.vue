@@ -1,15 +1,30 @@
 <template>
   <div>
-    <b-card title="Titre de l'article" sub-title="Auteur">
-      <router-link class="card-link" to="/detail-article">Voir l'article</router-link>
-    </b-card>
+    <div v-for="article in articles" :key="article._id">
+      <b-card :title="article.title" :sub-title="article.author_id">
+        <p @click="setId(article.id)"><router-link class="card-link" to="/detail-article" >Voir l'article</router-link></p>
+      </b-card>
+    </div>
 </div>
 </template>
 
 <script>
 export default {
   name: "ListArticles",
-  props: {}
+  data() {
+    return {
+      articles: []
+    };
+  },
+  created() {
+   this.articles = this.$store.state.articles;
+  },
+  methods: {
+    setId(id){
+      this.$store.commit("setId",id)
+      console.log(this.$store.state.id)
+    }
+  }
 };
 </script>
 
