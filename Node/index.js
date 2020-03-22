@@ -161,9 +161,9 @@ app.post('/login', urlEncodedParser, (req, res) => {
 })
 
 app.post('/private', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.send('Connected')
+    res.json({status: 'connected'})
 })
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
     console.log('Listening on port ' + process.env.PORT)
 })
