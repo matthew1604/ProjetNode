@@ -8,7 +8,10 @@
 
 <script>
 export default {
-  name: 'Home'
+  name: 'Home',
+  created() {
+    this.$store.commit("loadArticles");
+  }
 }
 </script>
 
