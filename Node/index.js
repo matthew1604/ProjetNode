@@ -105,7 +105,7 @@ app.post('/remove-article', passport.authenticate('jwt', { session: false }), ur
 })
 
 app.post('/update-article', passport.authenticate('jwt', { session: false }), urlEncodedParser, (req, res) => {
-    const id = req.body.title
+    const id = req.body.id
     const title = req.body.title
     const body = req.body.body
     const author_id = req.body.author_id
