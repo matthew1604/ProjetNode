@@ -80,7 +80,7 @@ app.post('/articles', (req, res) => {
         .catch( error => res.json({error}) )
 })
 
-app.post('/add-article', urlEncodedParser, (req, res) => {
+app.post('/add-article', passport.authenticate('jwt', { session: false }), urlEncodedParser, (req, res) => {
     const title = req.body.title
     const body = req.body.body
     const author_id = req.body.author_id
@@ -96,7 +96,7 @@ app.post('/add-article', urlEncodedParser, (req, res) => {
         .catch( error => res.json({error}) )
 })
 
-app.post('/remove-article', urlEncodedParser, (req, res) => {
+app.post('/remove-article', passport.authenticate('jwt', { session: false }), urlEncodedParser, (req, res) => {
     const id = req.body.id
     const url = '/article/' + id 
     axiosRestdb.delete(url)
@@ -104,7 +104,7 @@ app.post('/remove-article', urlEncodedParser, (req, res) => {
         .catch( error => res.json({error}) )
 })
 
-app.post('/update-article', urlEncodedParser, (req, res) => {
+app.post('/update-article', passport.authenticate('jwt', { session: false }), urlEncodedParser, (req, res) => {
     const id = req.body.title
     const title = req.body.title
     const body = req.body.body
@@ -164,6 +164,6 @@ app.post('/private', passport.authenticate('jwt', { session: false }), (req, res
     res.send('Connected')
 })
 
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
     console.log('Listening on port ' + process.env.PORT)
 })
