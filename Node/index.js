@@ -160,6 +160,10 @@ app.post('/login', urlEncodedParser, (req, res) => {
     }).catch( error => res.json({error}) )
 })
 
+app.post('/private', passport.authenticate('jwt', { session: false }), (req, res) => {
+    res.send('Connected')
+})
+
 app.listen(process.env.PORT, () => {
     console.log('Listening on port ' + process.env.PORT)
 })
